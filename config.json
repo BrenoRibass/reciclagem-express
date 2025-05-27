@@ -1,0 +1,9 @@
+{
+  "db": {
+    "host": "pm-db3-instance-1.cays6omgehnd.us-east-1.rds.amazonaws.com",
+    "port": 3306,
+    "username": "admpatiomobile",
+    "password": "cczsp7KDf1y2BMv",
+    "database": "reciclagem"
+  }
+}
