@@ -381,7 +381,8 @@
             background: white;
             border-radius: var(--border-radius);
             overflow: hidden;
-            min-width: 800px;
+            min-width: auto;
+            table-layout: fixed;
         }
         
         th, td {
@@ -399,6 +400,7 @@
             letter-spacing: 0.5px;
             position: sticky;
             top: 0;
+            text-align: center;
         }
         
         tbody tr {
@@ -593,6 +595,82 @@
             margin-bottom: 0.3rem;
         }
         
+        /* Mantém o estilo padrão para todos os inputs */
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--light-gray);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Estilização específica apenas para o input de arquivo */
+        .file-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 1.8rem;
+        }
+
+        /* Botão personalizado */
+        .file-input-container::before {
+            content: 'Selecionar arquivo';
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .file-input-container:hover::before {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Texto do arquivo */
+        .file-name {
+            padding: 0 1rem;
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--gray);
+        }
+
+        /* Input de arquivo (invisível) */
+        .file-input-container input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            left: 0;
+            top: 0;
+        }
+
+        /* Feedback visual */
+        .file-input-container input[type="file"]:valid + .file-name {
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .file-input-container:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
         /* Responsividade */
         @media (max-width: 992px) {
             .header-content {
@@ -671,6 +749,17 @@
             .card {
                 padding: 1.5rem;
             }
+        }
+
+        @media (max-width: 480px) {
+            th, td {
+                padding: 0.3rem 0.5rem;
+                font-size: 0.6rem;
+            }
+            th {
+                /* se quiser, diminua ainda mais ou altere quebra de texto */
+                white-space: normal;
+            }   
         }
         
         /* Animação de entrada */
