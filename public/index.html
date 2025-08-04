@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reciclagem Express</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="shortcut icon" href="./assets/sinal-de-reciclagem.png" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-recycle"></i>
+                <span>Reciclagem Express</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#coletas">Coletas</a></li>
+                    <li><a href="./static/func.html">Sou Funcionário</a></li>
+                    <li><a href="/swagger" target="_blank">Swagger</a></li>
+                </ul>
+            </nav>
+            <div class="api-status" id="apiStatus">
+                <div class="indicator"></div>
+                <span>Conectando ao servidor...</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Total de Coletas</h3>
+                    <div class="card-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                </div>
+                <div class="card-content" id="totalColetas">0</div>
+                <div class="card-footer">Atualizado agora mesmo</div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Materiais Reciclados</h3>
+                    <div class="card-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                </div>
+                <div class="card-content" id="totalMateriais">0 kg</div>
+                <div class="card-footer">Atualizado agora mesmo</div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Status do Servidor</h3>
+                    <div class="card-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                </div>
+                <div class="card-content" id="apiStatusCard">Verificando...</div>
+                <div class="card-footer" id="apiTimestamp"></div>
+            </div>
+        </section>
+
+        <section id="coletas">
+            <h2 class="section-title">Registrar Nova Coleta</h2>
+            <div class="form-container">
+                <form id="coletaForm">
+                    <div class="form-group">
+                        <label for="material">Material</label>
+                        <select id="material" required>
+                            <option value="" disabled selected>Selecione o material</option>
+                            <option value="PLASTICO">Plástico</option>
+                            <option value="PAPEL">Papel</option>
+                            <option value="VIDRO">Vidro</option>
+                            <option value="METAL">Metal</option>
+                            <option value="ORGANICO">Orgânico</option>
+                            <option value="OUTROS_DIVERSOS">Outros / Diversos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade (kg)</label>
+                        <input type="number" id="quantidade" step="0.1" min="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="local">Local da Coleta</label>
+                        <input type="text" id="local" required>
+                    </div>
+                        <div class="file-input-container">
+                        <input type="file" id="anexo" accept="image/*">
+                        <span class="file-name" for="anexo">Anexo</span>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-plus-circle"></i> Registrar Coleta
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Últimas Coletas</h2>
+            <div class="form-container">
+                <div class="table-responsive">
+                    <table id="coletasTable">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Quant. (kg)</th>
+                                <th>Local</th>
+                                <th>Data</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Os dados serão preenchidos via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Reciclagem Express</h3>
+                <p>Solução completa para gerenciamento de coleta seletiva.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contato</h3>
+                <p><i class="fas fa-user-graduate"></i> Thiago Dias Oliveira</p>
+                <p><i class="fas fa-envelope"></i> thiago.diasoliveira@hotmail.com</p>
+                <p><i class="fas fa-user-graduate"></i> Breno Ferreira Ribas</p>
+                <p><i class="fas fa-envelope"></i> brenoribas@hotmail.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Links Rápidos</h3>
+                <p><a href="/swagger" target="_blank">Documentação da API</a></p>
+                <p><a href="/hello">Teste de API</a></p>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 Reciclagem Express. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage">Operação realizada com sucesso!</span>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const coletaForm = document.getElementById('coletaForm');
+        const coletasTable = document.getElementById('coletasTable').getElementsByTagName('tbody')[0];
+        const totalColetas = document.getElementById('totalColetas');
+        const totalMateriais = document.getElementById('totalMateriais');
+        const apiStatus = document.getElementById('apiStatus');
+        const apiStatusCard = document.getElementById('apiStatusCard');
+        const apiTimestamp = document.getElementById('apiTimestamp');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notificationMessage');
+        
+        // Função para mostrar notificação
+        function showNotification(message, isSuccess = true) {
+            notificationMessage.textContent = message;
+            notification.className = `notification ${isSuccess ? 'success' : 'error'} show`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Função para verificar status da API
+        async function checkApiStatus() {
+            try {
+                const response = await fetch('/api/status');
+                if (response.ok) {
+                    const data = await response.json();
+                    apiStatus.innerHTML = '<div class="indicator"></div> <span>API Online</span>';
+                    apiStatus.classList.add('active');
+                    apiStatusCard.textContent = 'Online';
+                    apiStatusCard.style.color = '#2ecc71';
+                    apiTimestamp.textContent = `Atualizado em: ${new Date(data.timestamp).toLocaleTimeString()}`;
+                } else {
+                    throw new Error('API offline');
+                }
+            } catch (error) {
+                apiStatus.innerHTML = '<div class="indicator"></div> <span>API Offline</span>';
+                apiStatus.classList.remove('active');
+                apiStatusCard.textContent = 'Offline';
+                apiStatusCard.style.color = '#e74c3c';
+                apiTimestamp.textContent = 'Última verificação: ' + new Date().toLocaleTimeString();
+                showNotification('Falha ao conectar com o servidor', false);
+            }
+        }
+        
+        // Função para carregar dados iniciais
+        async function loadData() {
+            try {
+                const response = await fetch('/api/coletas');
+                if (!response.ok) throw new Error('Erro ao carregar coletas');
+                
+                const coletas = await response.json();
+                
+                // Atualizar tabela
+                coletasTable.innerHTML = '';
+                coletas.forEach(coleta => {
+                    const row = coletasTable.insertRow();
+                    row.insertCell(0).textContent = coleta.material;
+                    row.insertCell(1).textContent = coleta.quantidade;
+                    row.insertCell(2).textContent = coleta.local;
+                    row.insertCell(3).textContent = new Date(coleta.data).toLocaleDateString();
+                    
+                    const actionsCell = row.insertCell(4);
+                    actionsCell.className = 'actions';
+                    actionsCell.innerHTML = `
+                        <button class="action-btn delete-btn" onclick="deleteColeta('${coleta.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                });
+                
+                // Atualizar resumos
+                totalColetas.textContent = coletas.length;
+                const totalKg = coletas.reduce((sum, coleta) => sum + parseFloat(coleta.quantidade), 0);
+                totalMateriais.textContent = `${totalKg.toFixed(1)} kg`;
+                
+            } catch (error) {
+                showNotification('Falha ao carregar dados: ' + error.message, false);
+            }
+        }
+        
+        // Registrar nova coleta
+        coletaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const material = document.getElementById('material').value;
+            const quantidade = document.getElementById('quantidade').value;
+            const local = document.getElementById('local').value;
+            
+            try {
+                const response = await fetch('/api/coletas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ material, quantidade, local })
+                });
+                
+                if (response.ok) {
+                    showNotification('Coleta registrada com sucesso!');
+                    coletaForm.reset();
+                    loadData();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erro ao registrar coleta');
+                }
+            } catch (error) {
+                showNotification(error.message, false);
+            }
+        });
+        
+        // Função para excluir coleta
+        window.deleteColeta = async (id) => {
+            if (confirm('Tem certeza que deseja excluir esta coleta?')) {
+                try {
+                    const response = await fetch(`/api/coletas/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        showNotification('Coleta excluída com sucesso!');
+                        loadData();
+                    } else {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Falha ao excluir coleta');
+                    }
+                } catch (error) {
+                    showNotification(error.message, false);
+                }
+            }
+        };
+        
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+
+        fileInputs.forEach(input => {
+            // Encontra o elemento de nome de arquivo mais próximo
+            const fileNameDisplay = input.closest('.file-input-container').querySelector('.file-name');
+            
+            // Adiciona um ouvinte de evento para quando um arquivo é selecionado
+            input.addEventListener('change', function() {
+                // Verifica se pelo menos um arquivo foi selecionado
+                if (this.files && this.files.length > 0) {
+                    // Se for múltiplos arquivos, mostra a quantidade
+                    if (this.files.length > 1) {
+                        fileNameDisplay.textContent = `${this.files.length} arquivos selecionados`;
+                    } else {
+                        // Para um único arquivo, mostra o nome
+                        fileNameDisplay.textContent = this.files[0].name;
+                    }
+                    
+                    // Adiciona uma classe para indicar que um arquivo foi selecionado
+                    fileNameDisplay.classList.add('file-selected');
+                } else {
+                    // Se nenhum arquivo foi selecionado, mostra o texto padrão
+                    fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
+                    fileNameDisplay.classList.remove('file-selected');
+                }
+            });
+        });
+
+        // Inicialização
+        checkApiStatus();
+        loadData();
+        
+        // Verificar status a cada 30 segundos
+        setInterval(checkApiStatus, 30000);
+    </script>
+</body>
+</html>
