@@ -6,6 +6,13 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+    app.enableCors({
+    origin: '*',
+    methods: '*',
+    allowedHeaders: '*',
+  });
+
+  
   const config = new DocumentBuilder()
     .setTitle('Reciclagem Express API')
     .setDescription('API para solicitação e coleta de lixo')
