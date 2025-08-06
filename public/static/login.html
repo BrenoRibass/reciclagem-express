@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/style_login.css">
+    <link rel="shortcut icon" href="../assets/sinal-de-reciclagem.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <a href="../index.html" style="text-decoration: none;"><i class="fas fa-recycle"></i></a>
+                <a href="../index.html" id="logo_link" style="all: unset; cursor: pointer; display: inline; background: none; color: inherit; text-decoration: none;"><span id="logo_span">Reciclagem Express</span></a>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <div class="login-page" id="loginPage">
+            <div class="login-logo">
+                <div class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <span>Reciclagem Express</span>
+                </div>
+                <h1>Área do Funcionário</h1>
+            </div>
+            
+            <div class="form-container">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> E-mail</label>
+                        <input type="email" id="email" required placeholder="seu.email@reciclagem.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Senha</label>
+                        <input type="password" id="password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-sign-in-alt"></i> Entrar
+                    </button>
+                    <div class="form-group">
+                        <button type="button" id="registerBtn" class="btn">
+                            <i class="fas fa-user-plus"></i> Cadastre-se
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>    
+
+  <script>
+  (function() {
+    const baseUrl     = 'http://ec2-54-89-223-177.compute-1.amazonaws.com:3000';
+    const loginForm   = document.getElementById('loginForm');
+    const registerBtn = document.getElementById('registerBtn');
+
+    // Redireciona para a página de cadastro
+    registerBtn.addEventListener('click', () => {
+      window.location.href = 'register.html';
+    });
+
+    // Submissão do login
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      // Remove mensagens de erro antigas
+      document.querySelectorAll('.error-msg').forEach(el => el.remove());
+
+      const email  = document.getElementById('email').value.trim();
+      const senha  = document.getElementById('password').value;
+
+      try {
+        const res = await fetch(`${baseUrl}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          // Exibe a mensagem que veio da API
+          throw new Error(data.message || 'Erro ao realizar login');
+        }
+
+        // Armazena o token e redireciona
+        localStorage.setItem('token', data.access_token);
+        window.location.href = './index.html';
+
+      } catch (err) {
+        const msg = document.createElement('p');
+        msg.classList.add('error-msg');
+        msg.textContent = err.message;
+        msg.style.color = 'red';
+        loginForm.appendChild(msg);
+      }
+    });
+  })();
+  </script>
+</body>
+</html>    

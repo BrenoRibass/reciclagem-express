@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro | Reciclagem Express</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../styles/style_login.css"/>
+  <link rel="shortcut icon"
+        href="../assets/sinal-de-reciclagem.png"
+        type="image/x-icon"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap"
+        rel="stylesheet"/>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <a href="../index.html" style="text-decoration: none;"><i class="fas fa-recycle"></i></a>
+        <a href="../index.html" id="logo_link" style="all: unset; cursor: pointer; display: inline; background: none; color: inherit; text-decoration: none;">
+          <span id="logo_span">Reciclagem Express</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="login-page">
+      <div class="login-logo">
+        <i class="fas fa-recycle"></i>
+        <span>Reciclagem Express</span>
+        <h1>Cadastro de Usuário</h1>
+      </div>
+      <div class="form-container">
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="nome"><i class="fas fa-user"></i> Nome</label>
+            <input type="text" id="nome" required placeholder="Seu Nome Completo"/>
+          </div>
+          <div class="form-group">
+            <label for="email"><i class="fas fa-envelope"></i> E-mail</label>
+            <input type="email" id="email" required placeholder="seu.email@reciclagem.com"/>
+          </div>
+          <div class="form-group">
+            <label for="password"><i class="fas fa-lock"></i> Senha</label>
+            <input type="password" id="password" required placeholder="•••••••••••"/>
+          </div>
+          <div class="form-group">
+            <label for="type"><i class="fa-solid fa-user-doctor"></i> Tipo de Usuário</label>
+            <select id="type">
+              <option value="solicitante" selected>Solicitante</option>
+              <option value="prestador">Prestador</option>
+            </select>
+          </div>
+          <button type="submit" class="btn">
+            <i class="fa-solid fa-user-plus"></i> Cadastrar
+          </button>
+          <p class="error-msg" style="display:none;color:red;margin-top:1rem;"></p>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (function() {
+    const baseUrl     = 'http://ec2-54-89-223-177.compute-1.amazonaws.com:3000';
+    const form        = document.getElementById('registerForm');
+    const errorMsgEl  = form.querySelector('.error-msg');
+
+    // Gera um telefone brasileiro aleatório no formato 11 dígitos (11 + 9 dígitos)
+    function gerarTelefone() {
+      const ddd = '11';
+      const resto = Math.floor(Math.random() * 1e9)
+                     .toString()
+                     .padStart(9, '0');
+      return ddd + resto;
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      errorMsgEl.style.display = 'none';
+      errorMsgEl.textContent   = '';
+
+      const nome  = form.nome.value.trim();
+      const email = form.email.value.trim();
+      const senha = form.password.value;
+      const tipo  = form.type.value;
+      const telefone = gerarTelefone();
+
+      try {
+        const res = await fetch(`${baseUrl}/usuarios`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome,
+            email,
+            senha_hash: senha,
+            telefone,
+            tipo_usuario: tipo
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Erro ao cadastrar');
+        }
+
+        // Cadastro ok → volta para login
+        alert('Cadastro realizado com sucesso! Você será redirecionado para o login.');
+        window.location.href = 'login.html';
+
+      } catch (err) {
+        errorMsgEl.textContent = err.message;
+        errorMsgEl.style.display = 'block';
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

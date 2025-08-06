@@ -3,537 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funcionário - Reciclagem Express</title>
+    <title>Funcionário</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../styles/style_func.css">
+    <link rel="shortcut icon" href="../assets/sinal-de-reciclagem.png" type="image/x-icon"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <div class="header-content">
             <div class="logo">
-                <a href="../index.html" style="text-decoration: none;"><i class="fas fa-recycle"></i></a>
-                <a href="../index.html" id="logo_link" style="all: unset; cursor: pointer; display: inline; background: none; color: inherit; text-decoration: none;"><span id="logo_span">Reciclagem Express</span></a>
+                <a href="./index.html" style="text-decoration: none;"><i class="fas fa-recycle"></i></a>
+                <a href="./index.html" id="logo_link" style="all: unset; cursor: pointer;"><span id="logo_span">Reciclagem Express</span></a>
             </div>
-            <nav id="employeeNav" style="display: none;">
+            <nav id="employeeNav" style="display:none;">
                 <ul>
                     <li><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
                     <li><a href="#coletas"><i class="fas fa-tasks"></i> Minhas Coletas</a></li>
-                    <li><a href="#"><i class="fas fa-history"></i> Histórico</a></li>
+                    <li><a href="index.html"><i class="fas fa-history"></i> Solicitações</a></li>
                 </ul>
             </nav>
-            <div class="user-info" id="userInfo" style="display: none;">
+            <div class="user-info" id="userInfo" style="display:none;">
                 <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Funcionário">
                 <span id="func_name"></span>
-                <button class="logout-btn" id="logoutBtn">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
-    </header>
+    </header>    
 
-    <main class="container">
-        <!-- Página de Login (inicialmente visível) -->
-        <div class="login-page" id="loginPage">
-            <div class="login-logo">
-                <div class="logo">
-                    <i class="fas fa-recycle"></i>
-                    <span>Reciclagem Express</span>
-                </div>
-                <h1>Área do Funcionário</h1>
-            </div>
-            
-            <div class="form-container">
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="email"><i class="fas fa-envelope"></i> E-mail</label>
-                        <input type="email" id="email" required placeholder="seu.email@reciclagem.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="password"><i class="fas fa-lock"></i> Senha</label>
-                        <input type="password" id="password" required placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="btn">
-                        <i class="fas fa-sign-in-alt"></i> Entrar
-                    </button>
-                </form>
-            </div>
-        </div>
+    <!-- Dashboard do Funcionário (inicialmente oculto) -->
+    <div class="employee-dashboard" id="employeeDashboard" style="display:none;">
+        <h1 class="section-title" id="welcomeTitle">Bem-vindo!</h1>
         
-        <!-- Dashboard do Funcionário (inicialmente oculto) -->
-        <div class="employee-dashboard" id="employeeDashboard">
-            <h1 class="section-title" id="welcomeTitle">Bem-vindo!</h1>
-            
-            <section class="dashboard">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Coletas Disponíveis</h3>
-                        <div class="card-icon">
-                            <i class="fas fa-list"></i>
-                        </div>
-                    </div>
-                    <div class="card-content" id="availableCollects">0</div>
-                    <div class="card-footer" id="availableUpdated">
-                        <i class="fas fa-sync-alt"></i> Carregando...
-                    </div>
+        <section class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Coletas Disponíveis</h3>
+                    <div class="card-icon"><i class="fas fa-list"></i></div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Coletas Aceitas</h3>
-                        <div class="card-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                    </div>
-                    <div class="card-content" id="acceptedCollects">0</div>
-                    <div class="card-footer" id="acceptedUpdated">
-                        <i class="fas fa-clock"></i> Carregando...
-                    </div>
+                <div class="card-content" id="availableCollects">0</div>
+                <div class="card-footer" id="availableUpdated"><i class="fas fa-sync-alt"></i> Carregando...</div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Coletas Aceitas</h3>
+                    <div class="card-icon"><i class="fas fa-check-circle"></i></div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Coletas Finalizadas</h3> 
-                        <div class="card-icon">
-                            <i class="fas fa-flag-checkered"></i>
-                        </div>
-                    </div>
-                    <div class="card-content" id="completedCollects">0</div>
-                    <div class="card-footer" id="completedUpdated">
-                        <i class="fas fa-calendar"></i> Carregando...
-                    </div>
+                <div class="card-content" id="acceptedCollects">0</div>
+                <div class="card-footer" id="acceptedUpdated"><i class="fas fa-clock"></i> Carregando...</div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Coletas Finalizadas</h3>
+                    <div class="card-icon"><i class="fas fa-flag-checkered"></i></div>
                 </div>
-            </section>
+                <div class="card-content" id="completedCollects">0</div>
+                <div class="card-footer" id="completedUpdated"><i class="fas fa-calendar"></i> Carregando...</div>
+            </div>
+        </section>
 
-            <section id="coletas">
-                <h2 class="section-title">Coletas Disponíveis</h2>
-                <div class="table-responsive">
-                    <table id="coletasTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Material</th>
-                                <th>Quantidade</th>
-                                <th>Local</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="availableCollectsBody">
-                            <!-- Conteúdo dinâmico será inserido aqui -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            
-            <section id="minhas-coletas">
-                <h2 class="section-title">Minhas Coletas</h2>
-                <div class="table-responsive">
-                    <table id="myCollectsTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Material</th>
-                                <th>Quantidade</th>
-                                <th>Local</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="myCollectsBody">
-                            <!-- Conteúdo dinâmico será inserido aqui -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-    </main>
+        <section id="coletas">
+            <h2 class="section-title">Coletas Disponíveis</h2>
+            <div class="table-responsive">
+                <table id="coletasTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Descrição</th><th>Local</th><th>Anexo</th><th>Data</th><th>Status</th><th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="availableCollectsBody"></tbody>
+                </table>
+            </div>
+        </section>
+        
+        <section id="minhas-coletas">
+            <h2 class="section-title">Minhas Coletas</h2>
+            <div class="table-responsive">
+                <table id="myCollectsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Descrição</th><th>Local</th><th>Anexo</th><th>Data</th><th>Status</th><th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myCollectsBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Reciclagem Express</h3>
-                <p>Solução completa para gerenciamento de coleta seletiva e sustentabilidade ambiental.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Contato</h3>
-                <p><i class="fas fa-user-graduate"></i> Thiago Dias Oliveira</p>
-                <p><i class="fas fa-envelope"></i> thiago.diasoliveira@hotmail.com</p>
-                <p><i class="fas fa-user-graduate"></i> Breno Ferreira Ribas</p>
-                <p><i class="fas fa-envelope"></i> brenoribas@hotmail.com</p>
-            </div>
-            <div class="footer-section">
-                <h3>Links Rápidos</h3>
-                <a href="#"><i class="fas fa-book"></i> Manual do Funcionário</a>
-                <a href="#"><i class="fas fa-file-alt"></i> Termos de Uso</a>
-                <a href="#"><i class="fas fa-shield-alt"></i> Política de Privacidade</a>
-            </div>
-            <div class="footer-section">
-                <h3>Suporte</h3>
-                <a href="#"><i class="fas fa-headset"></i> Central de Ajuda</a>
-                <a href="#"><i class="fas fa-bug"></i> Reportar Problema</a>
-                <a href="#"><i class="fas fa-comments"></i> Feedback</a>
-            </div>
-        </div>
-        <div class="copyright">
-            &copy; 2023 Reciclagem Express. Todos os direitos reservados.
-        </div>
-    </footer>
+    <footer>...seu footer...</footer>
 
     <div class="notification" id="notification">
         <i class="fas fa-check-circle"></i>
         <div class="notification-content">
-            <div class="notification-title">Sucesso!</div>
+            <div class="notification-title">Atenção!</div>
             <div id="notificationMessage">Operação realizada com sucesso!</div>
         </div>
     </div>
 
     <script>
-        // Configurações
-        const API_BASE_URL = 'https://ec2-54-89-223-177.compute-1.amazonaws.com:3000';
-        const STATUS_DISPONIVEL = 'DISPONIVEL';
-        const STATUS_ACEITO = 'ACEITO';
-        const STATUS_EM_ANDAMENTO = 'EM_ANDAMENTO';
-        const STATUS_FINALIZADO = 'FINALIZADO';
-        
-        // Elementos DOM
-        const loginPage = document.getElementById('loginPage');
-        const employeeDashboard = document.getElementById('employeeDashboard');
-        const employeeNav = document.getElementById('employeeNav');
-        const userInfo = document.getElementById('userInfo');
-        const loginForm = document.getElementById('loginForm');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const notification = document.getElementById('notification');
-        const notificationMessage = document.getElementById('notificationMessage');
-        const funcName = document.getElementById('func_name');
-        const welcomeTitle = document.getElementById('welcomeTitle');
-        const availableCollectsBody = document.getElementById('availableCollectsBody');
-        const myCollectsBody = document.getElementById('myCollectsBody');
-        
-        // Dados do funcionário
-        let currentEmployee = null;
-        let employeeCollects = {
-            disponiveis: [],
-            aceitas: [],
-            finalizadas: []
-        };
-        
-        // Função para mostrar notificação
-        function showNotification(message, isSuccess = true) {
-            notificationMessage.textContent = message;
-            notification.className = `notification ${isSuccess ? 'success' : 'error'} show`;
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Função para atualizar o horário de atualização
-        function updateTimeElement(elementId) {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            document.getElementById(elementId).innerHTML = `<i class="fas fa-sync-alt"></i> Atualizado às ${timeString}`;
-        }
-        
-        // Função para formatar dados da API
-        function formatCollectData(collects) {
-            return collects.map(coleta => {
-                return {
-                    id: coleta.id,
-                    material: coleta.material || 'Não especificado',
-                    quantidade: coleta.quantidade ? `${coleta.quantidade} kg` : '0 kg',
-                    local: coleta.local || 'Local não informado',
-                    status: coleta.status || STATUS_DISPONIVEL,
-                    data: coleta.data ? new Date(coleta.data).toLocaleDateString() : 'Data não informada'
-                };
-            });
-        }
-        
-        // Função para buscar coletas da API
-        async function fetchCollects(status) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/coletas?status=${status}`);
-                if (!response.ok) throw new Error('Erro ao buscar coletas');
-                
-                const data = await response.json();
-                return formatCollectData(data);
-            } catch (error) {
-                showNotification(`Falha ao carregar coletas: ${error.message}`, false);
-                return [];
-            }
-        }
-        
-        // Função para atualizar os cards de resumo
-        function updateSummaryCards() {
-            document.getElementById('availableCollects').textContent = employeeCollects.disponiveis.length;
-            document.getElementById('acceptedCollects').textContent = 
-                employeeCollects.aceitas.filter(c => c.status === STATUS_ACEITO || c.status === STATUS_EM_ANDAMENTO).length;
-            document.getElementById('completedCollects').textContent = 
-                employeeCollects.finalizadas.filter(c => c.status === STATUS_FINALIZADO).length;
-            
-            updateTimeElement('availableUpdated');
-            updateTimeElement('acceptedUpdated');
-            updateTimeElement('completedUpdated');
-            
-            // Atualizar rodapé dos cards
-            document.getElementById('acceptedUpdated').innerHTML = 
-                `<i class="fas fa-clock"></i> ${employeeCollects.aceitas.filter(c => c.status === STATUS_EM_ANDAMENTO).length} em andamento`;
-            
-            const today = new Date().toLocaleDateString();
-            const todayCount = employeeCollects.finalizadas.filter(c => 
-                c.status === STATUS_FINALIZADO && new Date(c.data).toLocaleDateString() === today
-            ).length;
-            
-            document.getElementById('completedUpdated').innerHTML = 
-                `<i class="fas fa-calendar"></i> ${todayCount} hoje`;
-        }
-        
-        // Função para renderizar coletas disponíveis
-        function renderAvailableCollects() {
-            availableCollectsBody.innerHTML = '';
-            
-            employeeCollects.disponiveis.forEach(coleta => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>#${coleta.id}</td>
-                    <td>${coleta.material}</td>
-                    <td>${coleta.quantidade}</td>
-                    <td>${coleta.local}</td>
-                    <td><span class="status-badge status-available">Disponível</span></td>
-                    <td class="actions">
-                        <button class="action-btn btn-accept" onclick="acceptCollect(${coleta.id})">
-                            <i class="fas fa-check"></i> Aceitar
-                        </button>
-                        <button class="action-btn btn-reject" onclick="rejectCollect(${coleta.id})">
-                            <i class="fas fa-times"></i> Recusar
-                        </button>
-                    </td>
-                `;
-                availableCollectsBody.appendChild(row);
-            });
-            
-            if (employeeCollects.disponiveis.length === 0) {
-                availableCollectsBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 20px;">
-                            Nenhuma coleta disponível no momento
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-        
-        // Função para renderizar minhas coletas
-        function renderMyCollects() {
-            myCollectsBody.innerHTML = '';
-            
-            const myCollects = [...employeeCollects.aceitas, ...employeeCollects.finalizadas];
-            
-            myCollects.forEach(coleta => {
-                const isCompleted = coleta.status === STATUS_FINALIZADO;
-                const statusClass = isCompleted ? 'status-completed' : 'status-accepted';
-                const statusText = isCompleted ? 'Finalizado' : 'Em Andamento';
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>#${coleta.id}</td>
-                    <td>${coleta.material}</td>
-                    <td>${coleta.quantidade}</td>
-                    <td>${coleta.local}</td>
-                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                    <td class="actions">
-                        ${isCompleted ? 
-                            `<button class="action-btn" disabled>
-                                <i class="fas fa-check"></i> Concluído
-                            </button>` : 
-                            `<button class="action-btn btn-accept" onclick="completeCollect(${coleta.id})">
-                                <i class="fas fa-check-circle"></i> Finalizar
-                            </button>`
-                        }
-                    </td>
-                `;
-                myCollectsBody.appendChild(row);
-            });
-            
-            if (myCollects.length === 0) {
-                myCollectsBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 20px;">
-                            Você ainda não aceitou nenhuma coleta
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-        
-        // Função para carregar todos os dados
-        async function loadAllData() {
-            try {
-                showNotification('Carregando dados...', true);
-                
-                // Buscar coletas disponíveis
-                employeeCollects.disponiveis = await fetchCollects(STATUS_DISPONIVEL);
-                
-                // Buscar coletas aceitas/em andamento
-                employeeCollects.aceitas = await fetchCollects(STATUS_ACEITO);
-                employeeCollects.aceitas = employeeCollects.aceitas.concat(await fetchCollects(STATUS_EM_ANDAMENTO));
-                
-                // Buscar coletas finalizadas
-                employeeCollects.finalizadas = await fetchCollects(STATUS_FINALIZADO);
-                
-                // Atualizar UI
-                updateSummaryCards();
-                renderAvailableCollects();
-                renderMyCollects();
-                
-            } catch (error) {
-                showNotification(`Falha ao carregar dados: ${error.message}`, false);
-            }
-        }
-        
-        // Simular login (substituir por autenticação real)
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // Simulação de autenticação
-            if(email && password) {
-                // Esconder página de login
-                loginPage.style.display = 'none';
-                
-                // Mostrar dashboard do funcionário
-                employeeDashboard.style.display = 'block';
-                employeeNav.style.display = 'flex';
-                userInfo.style.display = 'flex';
-                
-                // Definir funcionário atual
-                currentEmployee = {
-                    id: 1,
-                    name: email.split('@')[0],
-                    email: email
-                };
-                
-                funcName.textContent = currentEmployee.name;
-                welcomeTitle.textContent = `Bem-vindo, ${currentEmployee.name}!`;
-                
-                showNotification('Login realizado com sucesso!');
-                
-                // Carregar dados
-                loadAllData();
-            } else {
-                showNotification('Por favor, preencha todos os campos', false);
-            }
+    ;(async function(){
+      const baseUrl = 'http://ec2-54-89-223-177.compute-1.amazonaws.com:3000';
+      const token   = localStorage.getItem('token');
+      if(!token) return window.location.href='login.html';
+
+      const nav     = document.getElementById('employeeNav');
+      const info    = document.getElementById('userInfo');
+      const dash    = document.getElementById('employeeDashboard');
+      const logout  = document.getElementById('logoutBtn');
+      const welcome = document.getElementById('welcomeTitle');
+      const cards = {
+        avail: document.getElementById('availableCollects'),
+        acc:   document.getElementById('acceptedCollects'),
+        comp:  document.getElementById('completedCollects')
+      };
+      const foot = {
+        avail: document.getElementById('availableUpdated'),
+        acc:   document.getElementById('acceptedUpdated'),
+        comp:  document.getElementById('completedUpdated')
+      };
+      const tbodyAvail = document.getElementById('availableCollectsBody');
+      const tbodyMine  = document.getElementById('myCollectsBody');
+      const notif      = document.getElementById('notification');
+      const msg        = document.getElementById('notificationMessage');
+
+      nav.style.display       = 'block';
+      info.style.display      = 'flex';
+      dash.style.display      = 'block';
+
+      const payload = JSON.parse(atob(token.split('.')[1]||'{}'));
+      document.getElementById('func_name').textContent = payload.email;
+      welcome.textContent = `Bem-vindo, ${payload.email}!`;
+      logout.onclick = ()=>{ localStorage.removeItem('token'); location='login.html'; };
+
+      const headers = { 'Content-Type':'application/json','Authorization':`Bearer ${token}` };
+      const fmt = d=> new Date(d).toLocaleString();
+
+      async function loadAll(){
+        // clear tables
+        tbodyAvail.innerHTML = '';
+        tbodyMine.innerHTML  = '';
+        // fetch avail
+        const r1 = await fetch(`${baseUrl}/solicitacoes/elegiveis`,{headers});
+        const avail = r1.ok?await r1.json():[];
+        cards.avail.textContent = avail.length;
+        foot.avail.innerHTML    = `<i class="fas fa-sync-alt"></i> ${fmt(Date.now())}`;
+        avail.forEach(i=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${i.id}</td><td>${i.descricao}</td>
+            <td>${i.rua}, ${i.numero} – ${i.bairro}/${i.cidade}-${i.estado}</td>
+            <td>${i.imagem_url||'-'}</td>
+            <td>${fmt(i.criado_em)}</td><td>${i.status}</td>
+            <td><button data-act="aceitar" data-id="${i.id}" class="btn btn-accept"><i class="fas fa-check-circle"></i></button></td>`;
+          tbodyAvail.appendChild(tr);
         });
-        
-        // Logout
-        logoutBtn.addEventListener('click', function() {
-            loginPage.style.display = 'flex';
-            employeeDashboard.style.display = 'none';
-            employeeNav.style.display = 'none';
-            userInfo.style.display = 'none';
-            
-            // Limpar dados
-            currentEmployee = null;
-            employeeCollects = {
-                disponiveis: [],
-                aceitas: [],
-                finalizadas: []
-            };
-            
-            // Limpar formulário
-            loginForm.reset();
-            
-            showNotification('Logout realizado com sucesso!');
+        // fetch mine
+        const r2 = await fetch(`${baseUrl}/solicitacoes/prestador/minhas`,{headers});
+        const mine = r2.ok?await r2.json():[];
+        const acc  = mine.filter(x=>x.status==='aceita');
+        const cmp  = mine.filter(x=>x.status==='concluida');
+        cards.acc.textContent  = acc.length;
+        foot.acc.innerHTML     = `<i class="fas fa-clock"></i> ${fmt(Date.now())}`;
+        cards.comp.textContent = cmp.length;
+        foot.comp.innerHTML    = `<i class="fas fa-calendar"></i> ${fmt(Date.now())}`;
+        mine.forEach(i=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${i.id}</td><td>${i.descricao}</td>
+            <td>${i.rua}, ${i.numero} – ${i.bairro}/${i.cidade}-${i.estado}</td>
+            <td>${i.imagem_url||'-'}</td>
+            <td>${fmt(i.criado_em)}</td><td>${i.status}</td>
+            <td>${i.status==='aceita'
+              ? `<button data-act="finalizar" data-id="${i.id}" class="btn btn-accept"><i class="fas fa-flag-checkered"></i></button>
+                 <button data-act="cancelar" data-id="${i.id}" class="btn btn-reject"><i class="fas fa-times-circle"></i></button>`
+              : '—'}</td>`;
+          tbodyMine.appendChild(tr);
         });
-        
-        // Funções para coletas
-        async function acceptCollect(collectId) {
-            try {
-                // Simulação de chamada à API
-                // Substituir por: 
-                // await fetch(`${API_BASE_URL}/coletas/${collectId}/aceitar`, { method: 'POST' });
-                
-                // Mover coleta de disponíveis para aceitas
-                const coletaIndex = employeeCollects.disponiveis.findIndex(c => c.id === collectId);
-                if (coletaIndex !== -1) {
-                    const coleta = employeeCollects.disponiveis[coletaIndex];
-                    coleta.status = STATUS_ACEITO;
-                    employeeCollects.aceitas.push(coleta);
-                    employeeCollects.disponiveis.splice(coletaIndex, 1);
-                    
-                    // Atualizar UI
-                    updateSummaryCards();
-                    renderAvailableCollects();
-                    renderMyCollects();
-                    
-                    showNotification(`Coleta #${collectId} aceita com sucesso!`);
-                } else {
-                    throw new Error('Coleta não encontrada');
-                }
-                
-            } catch (error) {
-                showNotification(`Erro ao aceitar coleta: ${error.message}`, false);
-            }
-        }
-        
-        async function rejectCollect(collectId) {
-            try {
-                // Simulação de chamada à API
-                // Substituir por: 
-                // await fetch(`${API_BASE_URL}/coletas/${collectId}/rejeitar`, { method: 'POST' });
-                
-                // Remover coleta das disponíveis
-                const coletaIndex = employeeCollects.disponiveis.findIndex(c => c.id === collectId);
-                if (coletaIndex !== -1) {
-                    employeeCollects.disponiveis.splice(coletaIndex, 1);
-                    
-                    // Atualizar UI
-                    updateSummaryCards();
-                    renderAvailableCollects();
-                    
-                    showNotification(`Coleta #${collectId} recusada.`);
-                } else {
-                    throw new Error('Coleta não encontrada');
-                }
-                
-            } catch (error) {
-                showNotification(`Erro ao recusar coleta: ${error.message}`, false);
-            }
-        }
-        
-        async function completeCollect(collectId) {
-            try {
-                // Simulação de chamada à API
-                // Substituir por: 
-                // await fetch(`${API_BASE_URL}/coletas/${collectId}/finalizar`, { method: 'POST' });
-                
-                // Mover coleta de aceitas para finalizadas
-                const coletaIndex = employeeCollects.aceitas.findIndex(c => c.id === collectId);
-                if (coletaIndex !== -1) {
-                    const coleta = employeeCollects.aceitas[coletaIndex];
-                    coleta.status = STATUS_FINALIZADO;
-                    employeeCollects.finalizadas.push(coleta);
-                    employeeCollects.aceitas.splice(coletaIndex, 1);
-                    
-                    // Atualizar UI
-                    updateSummaryCards();
-                    renderMyCollects();
-                    
-                    showNotification(`Coleta #${collectId} finalizada com sucesso!`);
-                } else {
-                    throw new Error('Coleta não encontrada');
-                }
-                
-            } catch (error) {
-                showNotification(`Erro ao finalizar coleta: ${error.message}`, false);
-            }
-        }
-        
-        // Atualização periódica dos dados (a cada 30 segundos)
-        setInterval(() => {
-            if (currentEmployee) {
-                loadAllData();
-            }
-        }, 30000);
+      }
+
+      document.body.addEventListener('click',async e=>{
+        const b = e.target.closest('button[data-act]');
+        if(!b)return;
+        const id = b.dataset.id, a=b.dataset.act;
+        let url, m='POST', body;
+        if(a==='aceitar'){url=`${baseUrl}/solicitacoes/prestador/aceitar`; body=JSON.stringify({solicitacao_id:+id});}
+        if(a==='finalizar'){url=`${baseUrl}/solicitacoes/prestador/${id}/finalizar`; m='PATCH';}
+        if(a==='cancelar'){url=`${baseUrl}/solicitacoes/prestador/${id}/cancelar`; m='PATCH';}
+        const opts={method:m,headers}; if(body)opts.body=body;
+        const res = await fetch(url,opts);
+        if(res.ok){ msg.textContent='Sucesso!'; notif.classList.add('show','success'); setTimeout(()=>notif.classList.remove('show','success'),3000); await loadAll(); }
+        else { const ejs=await res.json().catch(()=>{}); msg.textContent=ejs?.message||'Erro'; notif.classList.add('show','error'); setTimeout(()=>notif.classList.remove('show','error'),3000); }
+      });
+
+      await loadAll();
+    })();
     </script>
 </body>
 </html>

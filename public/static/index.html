@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reciclagem Express</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../styles/style.css"/>
+  <link rel="shortcut icon" href="../assets/sinal-de-reciclagem.png" type="image/x-icon"/>
+  <style>
+    /* Dashboard cards */
+    .indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+    .indicator.online { background: #4caf50; }
+    .indicator.offline { background: #f44336; }
+
+    /* Table styling */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.75rem; text-align: center; border-bottom: 1px solid #ddd; }
+    .status-pendente  { color: #ff9800; font-weight: bold; }
+    .status-concluida { color: #4caf50; font-weight: bold; }
+    .status-cancelada { color: #f44336; font-weight: bold; }
+
+    /* Notification */
+    .notification { position: fixed; bottom: 20px; right: 20px; background: #4caf50; color: #fff; padding: 1rem; border-radius: 4px; display: none; }
+
+    /* Input masks placeholder */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo"><i class="fas fa-recycle"></i><span>Reciclagem Express</span></div>
+      <nav>
+        <ul>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#coletas">Coletas</a></li>
+          <li><a href="func.html">Sou Funcionário</a></li>
+        </ul>
+      </nav>
+      <div class="user-info" id="userInfo">
+        <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Funcionário"/>
+        <span id="func_name"></span>
+        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="dashboard">
+      <div class="card">
+        <div class="card-header"><h3>Total de Coletas</h3><i class="fas fa-trash-alt card-icon"></i></div>
+        <div class="card-content" id="totalColetas">0</div>
+        <div class="card-footer">Atualizado agora mesmo</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Materiais Reciclados</h3><i class="fas fa-recycle card-icon"></i></div>
+        <div class="card-content" id="totalMateriais">0 kg</div>
+        <div class="card-footer">Atualizado agora mesmo</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Status do Servidor</h3><i class="fas fa-server card-icon"></i></div>
+        <div class="card-content" id="apiStatusCard">Verificando...</div>
+        <div class="card-footer" id="apiTimestamp"></div>
+      </div>
+    </section>
+
+    <section id="coletas">
+      <h2 class="section-title">Registrar Nova Coleta</h2>
+      <div class="form-container">
+        <form id="coletaForm" enctype="multipart/form-data">
+          <div class="form-group"><label for="rua">Rua</label><input type="text" id="rua" required/></div>
+          <div class="form-group"><label for="numero">Número</label><input type="number" id="numero" required min="1"/></div>
+          <div class="form-group"><label for="bairro">Bairro</label><input type="text" id="bairro" required/></div>
+          <div class="form-group"><label for="cidade">Cidade</label><input type="text" id="cidade" required/></div>
+          <div class="form-group"><label for="estado">Estado</label><input type="text" id="estado" required maxlength="2"/></div>
+          <div class="form-group"><label for="cep">CEP</label><input type="text" id="cep" required pattern="\d{5}-\d{3}" placeholder="00000-000"/></div>
+          <div class="form-group"><label for="descricao">Descrição</label><input type="text" id="descricao" required/></div>
+          <div class="form-group"><label for="anexo">Arquivo de Imagem</label><input type="file" id="anexo" accept="image/*"/></div>
+          <button type="submit" class="btn"><i class="fas fa-plus-circle"></i> Registrar Coleta</button>
+          <p class="error-msg" id="coletaError" style="display:none;"></p>
+        </form>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Últimas Coletas</h2>
+      <div class="table-responsive">
+        <table id="coletasTable">
+          <thead><tr><th>Endereço</th><th>Descrição</th><th>Status</th><th>Data</th><th>Anexo</th></tr></thead>
+          <tbody id="coletasBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="notification" id="notification"><i class="fas fa-check-circle"></i><span id="notificationMessage"></span></div>
+
+  <script>
+  (async function() {
+    const baseUrl = 'http://ec2-54-89-223-177.compute-1.amazonaws.com:3000';
+    const token   = localStorage.getItem('token');
+    if (!token) return window.location.href = 'login.html';
+
+    const headers = { 'Authorization': `Bearer ${token}` };
+    const userInfoEl = document.getElementById('userInfo');
+    const funcNameEl = document.getElementById('func_name');
+    const logoutBtn  = document.getElementById('logoutBtn');
+    const totalColetasEl   = document.getElementById('totalColetas');
+    const totalMateriaisEl = document.getElementById('totalMateriais');
+    const apiCardEl        = document.getElementById('apiStatusCard');
+    const apiTimeEl        = document.getElementById('apiTimestamp');
+    const coletaForm       = document.getElementById('coletaForm');
+    const coletaErrorEl    = document.getElementById('coletaError');
+    const tableBody        = document.getElementById('coletasBody');
+    const notification     = document.getElementById('notification');
+    const notificationMsg  = document.getElementById('notificationMessage');
+
+    // Exibe usuário
+    funcNameEl.textContent = JSON.parse(atob(token.split('.')[1])).email;
+    userInfoEl.style.display = 'flex';
+    logoutBtn.onclick = () => { localStorage.removeItem('token'); window.location.href='login.html'; };
+
+    // Status API
+    try {
+      const start = Date.now();
+      const res   = await fetch(baseUrl);
+      const dur   = Date.now() - start;
+      if (res.ok) { apiCardEl.textContent = 'Online'; apiTimeEl.textContent = `Resposta em ${dur}ms`; }
+      else throw 0;
+    } catch { apiCardEl.textContent = 'Offline'; apiTimeEl.textContent = ''; }
+
+    // Carrega últimas coletas
+    async function fetchColetas() {
+        tableBody.innerHTML = '';
+        const res = await fetch(`${baseUrl}/solicitacoes/minhas`, { headers });
+        const data = res.ok ? await res.json() : [];
+        totalColetasEl.textContent = data.length;
+        totalMateriaisEl.textContent = `${data.length} kg`;
+
+        data.forEach(item => {
+            const tr = document.createElement('tr');
+
+            // Coluna Endereço
+            const tdEnd = document.createElement('td');
+            tdEnd.textContent = `${item.rua}, ${item.numero} – ${item.bairro}/${item.cidade}-${item.estado}`;
+            tr.appendChild(tdEnd);
+
+            // Coluna Descrição
+            const tdDesc = document.createElement('td');
+            tdDesc.textContent = item.descricao;
+            tr.appendChild(tdDesc);
+
+            // Coluna Status
+            const tdStatus = document.createElement('td');
+            tdStatus.textContent = item.status;
+            tdStatus.classList.add(`status-${item.status}`);
+            tr.appendChild(tdStatus);
+
+            // Coluna Data
+            const tdDate = document.createElement('td');
+            tdDate.textContent = new Date(item.criado_em).toLocaleString();
+            tr.appendChild(tdDate);
+
+            // Coluna Anexo
+            const tdAnexo = document.createElement('td');
+            if (item.imagem_url && item.imagem_url.startsWith('data:')) {
+            const img = document.createElement('img');
+            img.src = item.imagem_url;
+            img.style.maxWidth = '80px';
+            img.style.cursor   = 'pointer';
+            img.addEventListener('click', () => {
+                window.open(item.imagem_url, '_blank');
+            });
+            tdAnexo.appendChild(img);
+            } else {
+            tdAnexo.textContent = '-';
+            }
+            tr.appendChild(tdAnexo);
+
+            tableBody.appendChild(tr);
+        });
+    }
+
+
+    // Máscara CEP
+    document.getElementById('cep').addEventListener('input', e => {
+      let v = e.target.value.replace(/\D+/g, '');
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,8);
+      e.target.value = v;
+    });
+
+    // Submissão coletas
+    coletaForm.addEventListener('submit', async e => {
+      e.preventDefault(); coletaErrorEl.style.display='none';
+      let base64 = 'sem-anexo';
+      const file = coletaForm.anexo.files[0];
+      if (file) {
+        if (file.size > 1e6) { coletaErrorEl.textContent='Máx 1MB'; coletaErrorEl.style.display='block'; return; }
+        base64 = await new Promise((res,rej)=>{
+          const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(); r.readAsDataURL(file);
+        });
+      }
+      const body = {
+        rua: coletaForm.rua.value.trim(), numero: coletaForm.numero.value,
+        bairro: coletaForm.bairro.value.trim(), cidade: coletaForm.cidade.value.trim(),
+        estado: coletaForm.estado.value.trim(), cep: coletaForm.cep.value,
+        descricao: coletaForm.descricao.value.trim(), imagem_url: base64
+      };
+      try {
+        const res = await fetch(`${baseUrl}/solicitacoes`,{ method:'POST', headers: {...headers,'Content-Type':'application/json'}, body: JSON.stringify(body) });
+        const data = await res.json(); if(!res.ok) throw new Error(data.message);
+        notificationMsg.textContent='Coleta registrada!'; notification.style.display='block'; setTimeout(()=>notification.style.display='none',3000);
+        coletaForm.reset(); await fetchColetas();
+      } catch(err) { coletaErrorEl.textContent=err.message; coletaErrorEl.style.display='block'; }
+    });
+
+    await fetchColetas();
+  })();
+  </script>
+</body>
+</html>

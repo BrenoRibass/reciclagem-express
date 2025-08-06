@@ -20,11 +20,11 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
 
   // Configuração para servir arquivos estáticos
-  app.useStaticAssets(join(__dirname, '..', '..', 'public'));
+  app.useStaticAssets(join(__dirname, '..', '..','public'));
   
   // Rota para servir o frontend
   app.getHttpAdapter().get('/', (req: Request, res: Response) => {
-    res.sendFile(join(__dirname, '..', 'public', 'index.html'));
+    res.sendFile(join(__dirname, '..', 'public', 'login.html'));
   });
 
   // Rota para manter o "Hello World"

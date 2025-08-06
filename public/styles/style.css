@@ -289,7 +289,24 @@
             margin-bottom: 2.5rem;
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+        }
         
+        .user-info img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+            
         .form-group {
             margin-bottom: 1.8rem;
         }
@@ -349,7 +366,33 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: 0.5s;
         }
+
+        .error-msg { 
+            color: red; 
+            margin-top: .5rem; 
+        }
+
+        .notification {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #4caf50; color: #fff;
+            padding: 1rem; border-radius: 4px;
+            display: none;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
         
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         .btn:hover:before {
             left: 100%;
         }
@@ -694,6 +737,9 @@
             .form-container {
                 padding: 1.8rem;
             }
+            .user-info {
+            margin: 0 auto;
+            }
         }
         
         @media (max-width: 768px) {
@@ -749,6 +795,10 @@
             .card {
                 padding: 1.5rem;
             }
+            .user-info {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }            
         }
 
         @media (max-width: 480px) {
